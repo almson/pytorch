@@ -174,7 +174,7 @@ from tools.setup_helpers.dist_check import USE_DISTRIBUTED
 ################################################################################
 
 VERBOSE_SCRIPT = True
-RUN_BUILD_DEPS = True
+RUN_BUILD_DEPS = False
 # see if the user passed a quiet flag to setup.py arguments and respect
 # that in our parts of the build
 EMIT_BUILD_WARNING = False
