@@ -250,6 +250,12 @@
 - name: cumsum(Tensor self, int64_t dim, *, ScalarType dtype)
   self: cumsum_backward(grad, dim, self.scalar_type())
 
+- name: logcumsumexp(Tensor self, int64_t dim)
+  self: logcumsumexp_backward(grad, dim)
+
+- name: logcumsumexp(Tensor self, int64_t dim, *, ScalarType dtype)
+  self: logcumsumexp_backward(grad, dim, self.scalar_type())
+
 - name: conv_tbc(Tensor self, Tensor weight, Tensor bias, int64_t pad)
   self, weight, bias: conv_tbc_backward(grad, self, weight, bias, pad)
 

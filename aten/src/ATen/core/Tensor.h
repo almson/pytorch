@@ -380,6 +380,8 @@ class CAFFE2_API Tensor {
   Tensor & cosh_();
   Tensor cumsum(int64_t dim, ScalarType dtype) const;
   Tensor cumsum(int64_t dim) const;
+  Tensor logcumsumexp(int64_t dim, ScalarType dtype) const;
+  Tensor logcumsumexp(int64_t dim) const;
   Tensor cumprod(int64_t dim, ScalarType dtype) const;
   Tensor cumprod(int64_t dim) const;
   Tensor det() const;

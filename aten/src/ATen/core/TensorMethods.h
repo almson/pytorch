@@ -202,6 +202,12 @@ inline Tensor Tensor::cumsum(int64_t dim, ScalarType dtype) const {
 inline Tensor Tensor::cumsum(int64_t dim) const {
     return dispatch_type().cumsum(*this, dim);
 }
+inline Tensor Tensor::logcumsumexp(int64_t dim, ScalarType dtype) const {
+    return dispatch_type().logcumsumexp(*this, dim, dtype);
+}
+inline Tensor Tensor::logcumsumexp(int64_t dim) const {
+    return dispatch_type().logcumsumexp(*this, dim);
+}
 inline Tensor Tensor::cumprod(int64_t dim, ScalarType dtype) const {
     return dispatch_type().cumprod(*this, dim, dtype);
 }

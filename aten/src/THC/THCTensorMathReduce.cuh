@@ -597,6 +597,16 @@ struct AddOp {
 };
 
 template <typename T>
+struct LogAddExpOp {
+  __device__ __forceinline__ T operator()(T const &lhs, T const &rhs) {
+    T max = (lhs > rhs) ? lhs : rhs;
+    if (THCNumerics<T>::isinf(max))
+        return max;
+    return THCNumerics<float>::log(THCNumerics<float>::exp(lhs - max) + THCNumerics<float>::exp(rhs - max)) + max;
+  }
+};
+
+template <typename T>
 struct MulOp {
   __device__ __forceinline__ T operator()(T const &lhs, T const &rhs) {
     return THCNumerics<T>::mul(lhs, rhs);

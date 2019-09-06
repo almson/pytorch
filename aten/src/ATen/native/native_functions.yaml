@@ -590,6 +590,17 @@
 - func: cumsum(Tensor self, int dim, *, Tensor(a!) out) -> Tensor(a!)
 
 # FIXME: These could be combined as optional<ScalarType> but for https://github.com/pytorch/pytorch/issues/6593.
+- func: logcumsumexp(Tensor self, int dim, *, ScalarType dtype) -> Tensor
+  variants: function, method
+
+- func: logcumsumexp(Tensor self, int dim) -> Tensor
+  variants: function, method
+
+- func: logcumsumexp(Tensor self, int dim, *, ScalarType dtype, Tensor(a!) out) -> Tensor(a!)
+
+- func: logcumsumexp(Tensor self, int dim, *, Tensor(a!) out) -> Tensor(a!)
+
+# FIXME: These could be combined as optional<ScalarType> but for https://github.com/pytorch/pytorch/issues/6593.
 - func: cumprod(Tensor self, int dim, *, ScalarType dtype) -> Tensor
   variants: function, method
 

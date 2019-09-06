@@ -154,6 +154,38 @@ Tensor& cumsum_out(Tensor& result, const Tensor& self, int64_t dim) {
   return at::native::cumsum_out(result, self, dim, c10::nullopt);
 }
 
+static inline Tensor logcumsumexp(const Tensor& self, int64_t dim, optional<ScalarType> dtype) {
+  return at::legacy::th::_th_logcumsumexp(integer_upcast(self, dtype), dim);
+}
+
+Tensor logcumsumexp(const Tensor& self, int64_t dim, ScalarType dtype) {
+  return at::native::logcumsumexp(self, dim, optional<ScalarType>(dtype));
+}
+
+Tensor logcumsumexp(const Tensor& self, int64_t dim) {
+  return at::native::logcumsumexp(self, dim, c10::nullopt);
+}
+
+static inline Tensor& logcumsumexp_out(Tensor& result, const Tensor& self, int64_t dim, optional<ScalarType> dtype) {
+  // result type is favored over dtype; check that they match if provided (NumPy doesn't check)
+  AT_CHECK(
+      !dtype.has_value() || (result.scalar_type() == dtype.value()),
+      "provided dtype must match dtype of result in logcumsumexp. Got ",
+      toString(result.scalar_type()),
+      " and ",
+      toString(dtype.value()),
+      ".");
+  return at::legacy::th::_th_logcumsumexp_out(result, self.toType(result.scalar_type()), dim);
+}
+
+Tensor& logcumsumexp_out(Tensor& result, const Tensor& self, int64_t dim, ScalarType dtype) {
+  return at::native::logcumsumexp_out(result, self, dim, optional<ScalarType>(dtype));
+}
+
+Tensor& logcumsumexp_out(Tensor& result, const Tensor& self, int64_t dim) {
+  return at::native::logcumsumexp_out(result, self, dim, c10::nullopt);
+}
+
 static inline Tensor cumprod(const Tensor& self, int64_t dim, optional<ScalarType> dtype) {
   return at::legacy::th::_th_cumprod(integer_upcast(self, dtype), dim);
 }

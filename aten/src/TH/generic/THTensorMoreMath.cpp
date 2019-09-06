@@ -413,6 +413,27 @@ void THTensor_(cumprod)(THTensor *r_, THTensor *t, int dimension)
                        });
 }
 
+void THTensor_(logcumsumexp)(THTensor *r_, THTensor *t, int dimension)
+{
+  THArgCheck(dimension >= 0 && dimension < THTensor_(nDimensionLegacyNoScalars)(t), 2, "dimension %d out of range",
+      dimension);
+
+  THTensor_(resizeAs)(r_, t);
+
+  TH_TENSOR_DIM_APPLY2(scalar_t, t, scalar_t, r_, dimension,
+                       accreal cumsum = -std::numeric_limits<accreal>::infinity();
+                       int64_t i;
+                       for(i = 0; i < t_size; i++)
+                       {
+                         accreal el = t_data[i*t_stride];
+                         accreal m = std::max(cumsum, el);
+                         if (std::isinf(m))
+                             cumsum = m;
+                         else
+                             cumsum = std::log(std::exp(cumsum - m) + std::exp(el - m)) + m;
+                         r__data[i*r__stride] = (scalar_t)cumsum;
+                       });
+}
 
 void THTensor_(sign)(THTensor *r_, THTensor *t)
 {

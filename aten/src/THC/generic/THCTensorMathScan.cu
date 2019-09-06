@@ -112,6 +112,13 @@ void THCTensor_(cumsum)(THCState *state, THCTensor *self, THCTensor *src, int di
                              ScalarConvert<float, scalar_t>::to(0.0), AddOp<scalar_t>());
 }
 
+void THCTensor_(logcumsumexp)(THCState *state, THCTensor *self, THCTensor *src, int dimension)
+{
+  THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self, src));
+  return THCTensor_(scanDim)(state, self, src, dimension,
+                             ScalarConvert<float, scalar_t>::to(-std::numeric_limits<float>::infinity()), LogAddExpOp<scalar_t>());
+}
+
 void THCTensor_(cumprod)(THCState *state, THCTensor *self, THCTensor *src, int dimension)
 {
   THCAssertSameGPU(THCTensor_(checkGPU)(state, 2, self, src));

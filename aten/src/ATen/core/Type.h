@@ -190,6 +190,8 @@ struct CAFFE2_API Type {
   virtual Tensor & cosh_(Tensor & self) const = 0;
   virtual Tensor cumsum(const Tensor & self, int64_t dim, ScalarType dtype) const = 0;
   virtual Tensor cumsum(const Tensor & self, int64_t dim) const = 0;
+  virtual Tensor logcumsumexp(const Tensor & self, int64_t dim, ScalarType dtype) const = 0;
+  virtual Tensor logcumsumexp(const Tensor & self, int64_t dim) const = 0;
   virtual Tensor cumprod(const Tensor & self, int64_t dim, ScalarType dtype) const = 0;
   virtual Tensor cumprod(const Tensor & self, int64_t dim) const = 0;
   virtual Tensor det(const Tensor & self) const = 0;
