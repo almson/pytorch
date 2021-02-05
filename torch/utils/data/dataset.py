@@ -5,7 +5,7 @@ import torch
 from torch._utils import _accumulate
 # No 'default_generator' in torch/__init__.pyi
 from torch import default_generator  # type: ignore
-from typing import TypeVar, Generic, Iterable, Iterator, Sequence, List, Optional, Tuple
+from typing import TypeVar, Generic, Iterable, Iterator, Sequence, List, Tuple
 
 from ._utils import index_utils
 from ... import Tensor, Generator
@@ -278,7 +278,7 @@ class Subset(Dataset[T_co]):
 
 
 def random_split(dataset: Dataset[T], lengths: Sequence[int],
-                 generator: Optional[Generator] = default_generator) -> List[Subset[T]]:
+                 generator: Generator = default_generator) -> List[Subset[T]]:
     r"""
     Randomly split a dataset into non-overlapping new datasets of given lengths.
     Optionally fix the generator for reproducible results, e.g.:
