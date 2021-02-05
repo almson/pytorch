@@ -1,3 +1,5 @@
+import math
+
 import torch
 from torch._six import int_classes as _int_classes
 from torch import Tensor, Generator, default_generator
@@ -118,7 +120,7 @@ class RandomSampler(Sampler[int]):
             yield from torch.randint(high=n, size=(self.num_samples % 32,), dtype=torch.int64, generator=self.generator).tolist()
         else:
             for i in range(math.ceil(self.num_samples / n)):
-                seed = torch.randint(high=n, size=(1,), dtype=torch.int64, generator=self.generator).item()
+                seed = int(torch.randint(high=n, size=(1,), dtype=torch.int64, generator=self.generator).item())
                 yield from index_utils.Permutation(n, seed, stop=min(n, self.num_samples - i * n))
 
     def __len__(self):
@@ -139,7 +141,7 @@ class SubsetRandomSampler(Sampler[int]):
         self.generator = generator
 
     def __iter__(self):
-        seed = torch.randint(high=len(self.indices), size=(1,), dtype=torch.int64, generator=self.generator).item()
+        seed = int(torch.randint(high=len(self.indices), size=(1,), dtype=torch.int64, generator=self.generator).item())
         return (self.indices[i] for i in index_utils.Permutation(len(self.indices), seed))
 
     def __len__(self):

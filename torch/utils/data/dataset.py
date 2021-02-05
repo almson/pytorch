@@ -294,7 +294,7 @@ def random_split(dataset: Dataset[T], lengths: Sequence[int],
     if sum(lengths) != len(dataset):  # type: ignore
         raise ValueError("Sum of input lengths does not equal the length of the input dataset!")
 
-    seed = torch.randint(high=sum(lengths), size=(1,), dtype=torch.int64, generator=generator).item()
+    seed = int(torch.randint(high=sum(lengths), size=(1,), dtype=torch.int64, generator=generator).item())
     indices = index_utils.Permutation(sum(lengths), seed)
 
     return [Subset(dataset, indices[offset - length : offset]) for offset, length in zip(_accumulate(lengths), lengths)]

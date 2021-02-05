@@ -96,7 +96,7 @@ class DistributedSampler(Sampler[T_co]):
             # deterministically shuffle based on epoch and seed
             g = torch.Generator()
             g.manual_seed(self.seed + self.epoch)
-            seed = torch.randint(high=self.dataset_size, size=(1,), dtype=torch.int64, generator=g).item()
+            seed = int(torch.randint(high=self.dataset_size, size=(1,), dtype=torch.int64, generator=g).item())
             indices = index_utils.Permutation(self.dataset_size, seed, stop=self.total_size)
 
         # subsample
