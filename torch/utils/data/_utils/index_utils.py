@@ -1,4 +1,5 @@
 from math import sqrt, floor
+from typing import Dict
 
 
 class Range:
@@ -12,14 +13,19 @@ class Range:
     # for iterating
     index: int
 
-    def __init__(self, size, start=None, stop=None, step=None):
+    def __init__(self, size: int, start: int = None, stop: int = None, step: int = None):
         self.size = size
         self.start = start if start is not None else 0
         self.stop = stop if stop is not None else size
         self.step = step if step is not None else 1
-        assert 0 <= self.start <= self.stop
-        # assert self.stop <= self.size  # Allow wrap-around
-        assert 0 < self.step
+        if not (0 <= self.start <= self.stop):
+            raise ValueError('not (0 <= start <= stop)')
+        if self.stop > self.size:
+            pass  # Allow wrap-around
+        if self.step <= 0:
+            raise ValueError('step <= 0')
+        if (size == 0) != (len(self) == 0):
+            raise ValueError('if size==0 then stop-start must also be 0')
 
     def __len__(self):
         if self.start == self.stop:
@@ -31,7 +37,7 @@ class Range:
             sl = slice(index.start if index.start is not None else 0,
                        index.stop if index.stop is not None else len(self),
                        index.step if index.step is not None else 1)
-            if not (0 <= sl.start <= len(self) and sl.start <= sl.stop <= len(self) and 0 < sl.step):
+            if not (0 <= sl.start and sl.start <= sl.stop and 0 < sl.step):
                 raise IndexError
             return self._slice(sl)
 
@@ -63,7 +69,8 @@ class Range:
                      self.step * sl.step)
 
 
-# Should use a faster method
+# We can use a faster primehood test, but there is no readily available implementation.
+# But even this brute-force test is reasonably fast, O(sqrt(n))
 def _is_prime(n):
     if n == 2:
         return True
@@ -86,20 +93,28 @@ class Permutation(Range):
     prime: int
     seed: int
 
-    def __init__(self, size, seed, start=None, stop=None, step=None, _prime=None, _seed=None):
+    def __init__(self, size: int, seed: int, start: int = None, stop: int = None, step: int = None, _prime: int = None):
         super().__init__(size, start, stop, step)
         self.prime = self._get_prime(size) if _prime is None else _prime
-        self.seed = self._get_seed(seed) if _seed is None else _seed
+        self.seed = seed % self.prime
 
     def _get(self, index):
         x = self._map(index)
 
-        if x < self.size:
-            return x
-        else:
-            # _map(x) for x >= self.size returns values < self.size, as guaranteed by _gen_seed
-            # and these values fall into the "holes" left by x for which _map(x) >= self.size
-            return self._map(x)
+        while x >= self.size:
+            # If we map to a number greater than size, then the cycle of successive mappings must eventually result
+            # in a number less than size. Proof: The cycle of successive mappings traces a path
+            # that either always stays in the set n>=size or it enters and leaves it,
+            # else the 1:1 mapping would be violated (two numbers would map to the same number).
+            # Moreover, `set(range(size)) - set(map(n) for n in range(size) if map(n) < size)`
+            # equals the `set(map(n) for n in range(size, prime) if map(n) < size)`
+            # because the total mapping is exhaustive.
+            # Which means we'll arrive at a number that wasn't mapped to by any other valid index.
+            # This will take at most `prime-size` steps, and `prime-size` is on the order of log(size), so fast.
+            # But usually we just need to remap once.
+            x = self._map(x)
+
+        return x
 
     def _slice(self, sl):
         return Permutation(self.size,
@@ -107,8 +122,7 @@ class Permutation(Range):
                            self.start + sl.start * self.step,
                            self.start + sl.stop * self.step,
                            self.step * sl.step,
-                           self.prime,
-                           self.seed)
+                           self.prime)
 
     @staticmethod
     def _get_prime(size):
@@ -117,20 +131,14 @@ class Permutation(Range):
         """
         n = size + (3 - size % 4)
         while not _is_prime(n):
+            # We expect to find a prime after O(log(size)) iterations
+            # Using a brute-force primehood test, total complexity is O(log(size)*sqrt(size)), which is pretty good.
             n = n + 4
         return n
 
-    def _get_seed(self, seed):
-        for a in range(self.size, self.prime):
-            if self._map(a, seed) >= self.size:
-                return self._get_seed(seed + 1)
-        return seed
-
-    def _map(self, index, seed=None):
-        if seed is None:
-            seed = self.seed
+    def _map(self, index):
         a = self._permute_qpr(index)
-        b = (a + seed) % self.prime
+        b = (a + self.seed) % self.prime
         c = self._permute_qpr(b)
         return c
 
