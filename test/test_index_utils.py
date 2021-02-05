@@ -67,12 +67,12 @@ class TestPermutation(TestCase):
         assert visited.all()
 
         visited.setall(False)
-        for value in seq[:size//2]:
+        for value in seq[:size // 2]:
             if visited[value]:
                 raise Exception
             visited[value] = True
-        assert len(seq[:size//2]) == size//2
-        for value in seq[size//2:]:
+        assert len(seq[:size // 2]) == size // 2
+        for value in seq[size // 2:]:
             if visited[value]:
                 raise Exception
             visited[value] = True
@@ -83,7 +83,7 @@ class TestPermutation(TestCase):
             if visited[value]:
                 raise Exception
             visited[value] = True
-        assert len(seq[0:size:2]) == size//2
+        assert len(seq[0:size:2]) == size // 2
         for value in seq[1:size:2]:
             if visited[value]:
                 raise Exception

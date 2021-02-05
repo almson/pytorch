@@ -1,5 +1,4 @@
 from math import sqrt, floor
-from typing import Dict
 
 
 class Range:
