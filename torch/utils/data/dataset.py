@@ -1,11 +1,13 @@
 import bisect
 import warnings
 
+import torch
 from torch._utils import _accumulate
-from torch import randperm
 # No 'default_generator' in torch/__init__.pyi
 from torch import default_generator  # type: ignore
 from typing import TypeVar, Generic, Iterable, Iterator, Sequence, List, Optional, Tuple
+
+from ._utils import index_utils
 from ... import Tensor, Generator
 
 T_co = TypeVar('T_co', covariant=True)
@@ -292,5 +294,7 @@ def random_split(dataset: Dataset[T], lengths: Sequence[int],
     if sum(lengths) != len(dataset):  # type: ignore
         raise ValueError("Sum of input lengths does not equal the length of the input dataset!")
 
-    indices = randperm(sum(lengths), generator=generator).tolist()
+    seed = torch.randint(high=sum(lengths), size=(1,), dtype=torch.int64, generator=generator).item()
+    indices = index_utils.Permutation(sum(lengths), seed)
+
     return [Subset(dataset, indices[offset - length : offset]) for offset, length in zip(_accumulate(lengths), lengths)]
